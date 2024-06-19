@@ -25,11 +25,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+app.use('/', userRoute);
+
 app.get('/', (req, res) => {
     res.send('<h1>WELCOME TO MY HOME PAGE</h1>');
-})
-
-app.use('/', userRoute);
+});
 
 app.listen(PORT, ()=>{
     console.log(`My server running at http://localhost:${PORT}`);
