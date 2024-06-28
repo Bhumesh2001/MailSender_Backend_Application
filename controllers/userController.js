@@ -4,6 +4,7 @@ const { User } = require('../models/userModel');
 
 exports.mailSender = async (req, res) => {
     try {
+        const io = req.app.get('io');
         const {
             email, app_pass, hr_emails,
             subject, body, data,
@@ -12,7 +13,6 @@ exports.mailSender = async (req, res) => {
 
         let MailsHr = hr_emails.split('\n').map(line => line.trim()).filter(line => line !== '');
         let FilterMails = MailsHr.filter((value, index) => MailsHr.indexOf(value) === index);
-
         let attach = data ? [
             {
                 filename: fileName,
@@ -22,9 +22,6 @@ exports.mailSender = async (req, res) => {
         ] : [];
 
         let mailCount = 0;
-        const err = [];
-        const Res = [];
-
         for (let mail of FilterMails) {
             try {
                 let transPorter = nodemailer.createTransport({
@@ -46,24 +43,42 @@ exports.mailSender = async (req, res) => {
                     attachments: attach,
                     priority: 'high'
                 });
-                Res.push(info.messageId);
+                io.emit('log',{
+                    mesg: info.messageId,
+                    success: true,
+                });
                 mailCount++
             } catch (error) {
-                let errMesg;
                 if (error.responseCode === 534) {
-                    errMesg = 'Email address not found';
+                    io.emit('log', {
+                        mesg: 'Email address not found',
+                        success: false,
+                    });
                 } else if (error.responseCode === 550) {
-                    errMesg = 'Email delivery failed';
+                    errMesg = '';
+                    io.emit('log', {
+                        mesg: 'Email delivery failed',
+                        success: false,
+                    });
                 } else {
-                    errMesg = error.message;
+                    io.emit('log', {
+                        mesg: error.message,
+                        success: false,
+                    });
                 };
-                err.push(errMesg);
             };
         };
-        res.send(JSON.stringify({ success: true, err, Res, mailCount }));
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        res.send(JSON.stringify({ 
+            success: true, 
+            mailCount,
+        }));
     } catch (error) {
         console.log(error);
-        res.status(500).send(JSON.stringify({ error }));
+        res.status(500).send(JSON.stringify({ 
+            error, 
+            success: false 
+        }));
     };
 };
 

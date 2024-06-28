@@ -3,10 +3,20 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const http = require('http');
+const socketIo = require('socket.io');
+const userRoute = require('./routes/userRoute');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
-const userRoute = require('./routes/userRoute');
-const bodyParser = require('body-parser');
+const server = http.createServer(app);
+const io = socketIo(server, {
+    cors: {
+        origin: process.env.ORIGIN,
+        methods: ["GET", "POST"]
+    },
+});
 
 mongoose.connect(process.env.DB_URI);
 const db = mongoose.connection;
@@ -14,7 +24,6 @@ const db = mongoose.connection;
 db.on('connected', () => {
     console.log('Connected to mongodb');
 });
-
 db.on('error', (err) => {
     console.log(`error connecting to mongodb ${err}`);
 });
@@ -31,6 +40,15 @@ app.get('/', (req, res) => {
     res.send('<h1>WELCOME TO MY HOME PAGE</h1>');
 });
 
-app.listen(PORT, ()=>{
+io.on('connection', (socket) => {
+    console.log('Client connected');
+    socket.on('disconnect', () => {
+        console.log('Client disconnected');
+    });
+});
+
+app.set('io', io);
+
+server.listen(PORT, () => {
     console.log(`My server running at http://localhost:${PORT}`);
 });
