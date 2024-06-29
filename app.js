@@ -14,7 +14,8 @@ const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
         origin: process.env.ORIGIN,
-        methods: ["GET", "POST"]
+        methods: ["GET", "POST"],
+        credentials: true,
     },
 });
 
@@ -30,6 +31,8 @@ db.on('error', (err) => {
 
 app.use(cors({
     origin: process.env.ORIGIN,
+    methods: ['GET', 'POST'],
+    credentials: true
 }));
 
 app.use(express.json());
