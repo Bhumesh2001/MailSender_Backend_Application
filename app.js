@@ -29,11 +29,7 @@ db.on('error', (err) => {
     console.log(`error connecting to mongodb ${err}`);
 });
 
-app.use(cors({
-    origin: process.env.ORIGIN,
-    methods: ['GET', 'POST'],
-    credentials: true
-}));
+app.use(cors());
 
 app.use(express.json());
 app.use(bodyParser.json());
