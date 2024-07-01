@@ -21,19 +21,20 @@ exports.mailSender = async (req, res) => {
             }
         ] : [];
 
+        let transPorter = nodemailer.createTransport({
+            host: process.env.HOST,
+            port: process.env.SMTP_PORT,
+            secure: true,
+            pool: true,
+            auth: {
+                user: email,
+                pass: app_pass,
+            },
+        });
+
         let mailCount = 0;
         for (let mail of FilterMails) {
             try {
-                let transPorter = nodemailer.createTransport({
-                    host: process.env.HOST,
-                    port: process.env.SMTP_PORT,
-                    secure: true,
-                    pool: true,
-                    auth: {
-                        user: email,
-                        pass: app_pass,
-                    },
-                });
                 let info = await transPorter.sendMail({
                     from: `<${email}>`,
                     to: mail,
@@ -118,7 +119,7 @@ exports.signupUser = async (req, res) => {
 exports.loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }, { _id: 0, __v: 0 });
         if (!user) {
             return res.status(401).send(JSON.stringify({
                 success: false,
