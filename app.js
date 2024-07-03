@@ -43,9 +43,7 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-    const userId = socket.id;
-    console.log('Client connected! with this id', userId);
-    app.set('userId', userId);
+    console.log('Client connected!');
     socket.on('disconnect', () => {
         console.log('Client disconnected');
     });
