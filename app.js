@@ -44,14 +44,14 @@ app.get('/', (req, res) => {
 
 let room;
 io.on('connection', (socket) => {
-    console.log('Client connected!');
-
     socket.on('join', (room_name) => {
         room = room_name;
         socket.join(room_name); 
     });
+    console.log('Client connected!');
 
     socket.on('disconnect', () => {
+        socket.leave(room);
         console.log('Client disconnected');
     });
 });
