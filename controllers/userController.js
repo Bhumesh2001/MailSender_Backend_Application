@@ -5,6 +5,7 @@ const { User } = require('../models/userModel');
 exports.mailSender = async (req, res) => {
     try {
         const io = req.app.get('io');
+        const userId = req.app.get('userId');
         const {
             email, app_pass, hr_emails,
             subject, body, data,
@@ -40,29 +41,29 @@ exports.mailSender = async (req, res) => {
                     to: mail,
                     subject,
                     text: "This is mail by me",
-                    html: `<pre style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">${body}</pre>`,
+                    html: `<pre style="font-family: Arial, sans-serif; font-size: 13px; color: #333;">${body}</pre>`,
                     attachments: attach,
                     priority: 'high'
                 });
-                io.emit('log',{
+                io.to(userId).emit('log',{
                     mesg: info.messageId,
                     success: true,
                 });
                 mailCount++
             } catch (error) {
                 if (error.responseCode === 534) {
-                    io.emit('log', {
+                    io.to(userId).emit('log', {
                         mesg: 'Email address not found',
                         success: false,
                     });
                 } else if (error.responseCode === 550) {
                     errMesg = '';
-                    io.emit('log', {
+                    io.to(userId).emit('log', {
                         mesg: 'Email delivery failed',
                         success: false,
                     });
                 } else {
-                    io.emit('log', {
+                    io.to(userId).emit('log', {
                         mesg: error.message,
                         success: false,
                     });
