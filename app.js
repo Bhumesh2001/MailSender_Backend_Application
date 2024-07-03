@@ -42,14 +42,21 @@ app.get('/', (req, res) => {
     res.send('<h1>WELCOME TO MY HOME PAGE</h1>');
 });
 
+let room;
 io.on('connection', (socket) => {
     console.log('Client connected!');
+
+    socket.on('join', (room_name) => {
+        room = room_name;
+        socket.join(room_name); 
+    });
+
     socket.on('disconnect', () => {
         console.log('Client disconnected');
     });
 });
 
-app.set('io', io);
+app.set('io', { io, room });
 
 server.listen(PORT, () => {
     console.log(`My server running at http://localhost:${PORT}`);
