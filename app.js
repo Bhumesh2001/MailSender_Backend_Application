@@ -49,7 +49,6 @@ io.on('connection', (socket) => {
         socket.join(room_name); 
     });
     console.log('Client connected!');
-
     socket.on('disconnect', () => {
         socket.leave(room);
         console.log('Client disconnected');
