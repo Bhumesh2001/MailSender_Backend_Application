@@ -30,7 +30,6 @@ db.on('error', (err) => {
 });
 
 app.use(cors());
-
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -42,16 +41,15 @@ app.get('/', (req, res) => {
     res.send('<h1>WELCOME TO MY HOME PAGE</h1>');
 });
 
-let socket;
 io.on('connection', (socket) => {
-    socket = socket;
-    console.log('Client connected!');
+    console.log('Client connected! with =>', socket.id);
+    let clientSocketId = socket.id;
+    app.set('io', { io, clientSocketId });
     socket.on('disconnect', () => {
-        console.log('Client disconnected');
+        console.log('Client disconnected', socket.id);
+        clientSocketId = null;
     });
 });
-
-app.set('socket', socket);
 
 server.listen(PORT, () => {
     console.log(`My server running at http://localhost:${PORT}`);
