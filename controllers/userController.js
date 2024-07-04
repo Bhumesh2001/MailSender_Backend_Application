@@ -44,25 +44,25 @@ exports.mailSender = async (req, res) => {
                     attachments: attach,
                     priority: 'high'
                 });
-                io.sockets.in(room).emit('log',{
+                io.to(room).timeout(5000).emit('log',{
                     mesg: info.messageId,
                     success: true,
                 });
                 mailCount++
             } catch (error) {
                 if (error.responseCode === 534) {
-                    io.sockets.in(room).emit('log', {
+                    io.to(room).timeout(5000).emit('log', {
                         mesg: 'Email address not found',
                         success: false,
                     });
                 } else if (error.responseCode === 550) {
                     errMesg = '';
-                    io.sockets.in(room).emit('log', {
+                    io.to(room).timeout(5000).emit('log', {
                         mesg: 'Email delivery failed',
                         success: false,
                     });
                 } else {
-                    io.sockets.in(room).emit('log', {
+                    io.to(room).timeout(5000).emit('log', {
                         mesg: error.message,
                         success: false,
                     });
