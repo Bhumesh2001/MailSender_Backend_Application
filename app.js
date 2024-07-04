@@ -41,21 +41,14 @@ app.get('/', (req, res) => {
     res.send('<h1>WELCOME TO MY HOME PAGE</h1>');
 });
 
-const clients = {};
 io.on('connection', (socket) => {
-    const userId = socket.handshake.query.userId;
-
-    console.log(`Client connected: ${socket.id} (User: ${userId})`);
-    clients[userId] = socket.id;
-
-    app.set('data', { clients, userId });
-    app.set('io', io);
-
+    console.log('Client connected!');
     socket.on('disconnect', () => {
-        console.log(`Client disconnected: ${socket.id} (User: ${userId})`);
-        delete clients[userId];
+        console.log('Client disconnected');
     });
 });
+
+app.set('io', io);
 
 server.listen(PORT, () => {
     console.log(`My server running at http://localhost:${PORT}`);
