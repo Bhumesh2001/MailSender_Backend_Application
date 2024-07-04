@@ -43,6 +43,10 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
     console.log('Client connected!');
+    socket.on('join', (email) => {
+        app.set('email', email);
+        socket.join(email);
+    });
     socket.on('disconnect', () => {
         console.log('Client disconnected');
     });
