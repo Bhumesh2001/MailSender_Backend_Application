@@ -41,13 +41,19 @@ app.get('/', (req, res) => {
     res.send('<h1>WELCOME TO MY HOME PAGE</h1>');
 });
 
+const clients = {};
 io.on('connection', (socket) => {
-    console.log('Client connected! with =>', socket.id);
-    let clientSocketId = socket.id;
-    app.set('io', { io, clientSocketId });
+    const userId = socket.handshake.query.userId;
+
+    console.log(`Client connected: ${socket.id} (User: ${userId})`);
+    clients[userId] = socket.id;
+
+    app.set('data', { clients, userId });
+    app.set('io', io);
+
     socket.on('disconnect', () => {
-        console.log('Client disconnected', socket.id);
-        clientSocketId = null;
+        console.log(`Client disconnected: ${socket.id} (User: ${userId})`);
+        delete clients[userId];
     });
 });
 

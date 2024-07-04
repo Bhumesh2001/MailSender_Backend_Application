@@ -4,7 +4,12 @@ const { User } = require('../models/userModel');
 
 exports.mailSender = async (req, res) => {
     try {
-        const { io, clientSocketId } = req.app.get('io');
+        const io = req.app.get('io');
+        const { userId, clients } = req.app.get('data');
+        const clientSocketId = clients[userId];
+        console.log(
+            `io => ${io}, userId => ${userId}, clients => ${clients}, clientSocketId => ${clientSocketId}
+        `);
         const {
             email, app_pass, hr_emails,
             subject, body, data,
@@ -44,7 +49,7 @@ exports.mailSender = async (req, res) => {
                     attachments: attach,
                     priority: 'high'
                 });
-                io.to(clientSocketId).emit('log',{
+                io.to(clientSocketId).emit('log', {
                     mesg: info.messageId,
                     success: true,
                 });
@@ -70,15 +75,15 @@ exports.mailSender = async (req, res) => {
             };
         };
         await new Promise(resolve => setTimeout(resolve, 2000));
-        res.send(JSON.stringify({ 
-            success: true, 
+        res.send(JSON.stringify({
+            success: true,
             mailCount,
         }));
     } catch (error) {
         console.log(error);
-        res.status(500).send(JSON.stringify({ 
-            error, 
-            success: false 
+        res.status(500).send(JSON.stringify({
+            error,
+            success: false
         }));
     };
 };
