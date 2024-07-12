@@ -47,8 +47,9 @@ io.on('connection', (socket) => {
 
     socket.on('register', (userId) => {
         users[userId] = socket.id;
-        console.log(`User registered: ${userId}`);
-        app.set('socket', { socket, userId });
+        console.log(`User registered and joined room: ${userId}`);
+        socket.join(userId);
+        app.set('socket', { socket, users, io });
     });
 
     socket.on('disconnect', () => {
