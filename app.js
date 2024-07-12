@@ -41,10 +41,13 @@ app.get('/', (req, res) => {
     res.send('<h1>WELCOME TO MY HOME PAGE</h1>');
 });
 
-io.on('connection', (socket) => {
+io.sockets.on('connection', (socket) => {
     console.log('Client connected!');
 
-    app.set('socket', { io, userId: socket.id });
+    socket.on('join', (userId) => {
+        socket.join(userId);
+        app.set('socket', { io, userId });
+    });
 
     socket.on('disconnect', () => {
         console.log('Client disconnected!');
