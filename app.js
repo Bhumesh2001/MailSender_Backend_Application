@@ -44,12 +44,10 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
     console.log('Client connected!');
 
-    socket.on('register', (userId) => {
-        app.set('socket', { userId, socket });
-    });
+    app.set('socket', { io, userId: socket.id });
 
     socket.on('disconnect', () => {
-        console.log('User disconnected!');
+        console.log('Client disconnected!');
     });
 });
 
