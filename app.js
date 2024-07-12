@@ -43,15 +43,12 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
     console.log('Client connected!');
-
-    socket.on('join', (userId) => {
-        app.set('socket', { io, userId });
-    });
-
     socket.on('disconnect', () => {
         console.log('Client disconnected!');
     });
 });
+
+app.set('io', io);
 
 server.listen(PORT, () => {
     console.log(`My server running at http://localhost:${PORT}`);

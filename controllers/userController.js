@@ -4,7 +4,7 @@ const { User } = require('../models/userModel');
 
 exports.mailSender = async (req, res) => {
     try {
-        const { io, userId } = req.app.get('socket');
+        const io = req.app.get('io');
         const {
             email, app_pass, hr_emails,
             subject, body, data,
@@ -47,7 +47,6 @@ exports.mailSender = async (req, res) => {
                 io.emit('log', {
                     mesg: info.messageId,
                     success: true,
-                    userId
                 });
                 mailCount++
             } catch (error) {
@@ -55,19 +54,16 @@ exports.mailSender = async (req, res) => {
                     io.emit('log', {
                         mesg: 'Email address not found',
                         success: false,
-                        userId
                     });
                 } else if (error.responseCode === 550) {
                     io.emit('log', {
                         mesg: 'Email delivery failed',
                         success: false,
-                        userId
                     });
                 } else {
                     io.emit('log', {
                         mesg: error.message,
                         success: false,
-                        userId
                     });
                 };
             };
