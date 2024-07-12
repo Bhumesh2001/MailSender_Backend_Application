@@ -41,25 +41,15 @@ app.get('/', (req, res) => {
     res.send('<h1>WELCOME TO MY HOME PAGE</h1>');
 });
 
-const users = {};
 io.on('connection', (socket) => {
-    console.log('Client connected!', socket.id);
+    console.log('Client connected!');
 
     socket.on('register', (userId) => {
-        users[userId] = socket.id;
-        console.log(`User registered and joined room: ${userId}`);
-        socket.join(userId);
-        app.set('socket', { socket, users, io });
+        app.set('socket', { userId, socket });
     });
 
     socket.on('disconnect', () => {
-        console.log('User disconnected:', socket.id);
-        for (const [userId, socketId] of Object.entries(users)) {
-            if (socketId === socket.id) {
-                delete users[userId];
-                break;
-            }
-        }
+        console.log('User disconnected!');
     });
 });
 
