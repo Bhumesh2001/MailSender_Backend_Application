@@ -45,7 +45,7 @@ exports.mailSender = async (req, res) => {
                     attachments: attach,
                     priority: 'high'
                 });
-                io.to(userId).emit('log', {
+                io.to(socket.id).emit('log', {
                     mesg: info.messageId,
                     success: true,
                     userId
@@ -53,20 +53,20 @@ exports.mailSender = async (req, res) => {
                 mailCount++
             } catch (error) {
                 if (error.responseCode === 534) {
-                    io.to(userId).emit('log', {
+                    io.to(socket.id).emit('log', {
                         mesg: 'Email address not found',
                         success: false,
                         userId
                     });
                 } else if (error.responseCode === 550) {
                     errMesg = '';
-                    io.to(userId).emit('log', {
+                    io.to(socket.id).emit('log', {
                         mesg: 'Email delivery failed',
                         success: false,
                         userId
                     });
                 } else {
-                    io.to(userId).emit('log', {
+                    io.to(socket.id).emit('log', {
                         mesg: error.message,
                         success: false,
                         userId
