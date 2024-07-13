@@ -41,14 +41,30 @@ app.get('/', (req, res) => {
     res.send('<h1>WELCOME TO MY HOME PAGE</h1>');
 });
 
+const users = {};
+
 io.on('connection', (socket) => {
     console.log('Client connected!');
+
+    socket.join('commonRoom');
+
+    socket.on('register', (userId) => {
+        users[userId] = socket.id;
+        console.log(`User registered: ${userId}`);
+        app.set('io', { io, users });
+    });
+
     socket.on('disconnect', () => {
         console.log('Client disconnected!');
+        console.log('User disconnected:', socket.id);
+        for (const [userId, socketId] of Object.entries(users)) {
+            if (socketId === socket.id) {
+                delete users[userId];
+                break;
+            }
+        };
     });
 });
-
-app.set('io', io);
 
 server.listen(PORT, () => {
     console.log(`My server running at http://localhost:${PORT}`);

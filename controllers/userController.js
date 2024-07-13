@@ -4,12 +4,14 @@ const { User } = require('../models/userModel');
 
 exports.mailSender = async (req, res) => {
     try {
-        const io = req.app.get('io');
+        const { io, users } = req.app.get('io');
         const {
             email, app_pass, hr_emails,
             subject, body, data,
-            fileName, fileType
+            fileName, fileType, userId
         } = req.body;
+
+        console.log(users[userId]);
 
         let MailsHr = hr_emails.split('\n').map(line => line.trim()).filter(line => line !== '');
         let FilterMails = MailsHr.filter((value, index) => MailsHr.indexOf(value) === index);
@@ -44,24 +46,24 @@ exports.mailSender = async (req, res) => {
                     attachments: attach,
                     priority: 'high'
                 });
-                io.emit('log', {
+                io.to(users[userId]).emit('log', {
                     mesg: info.messageId,
                     success: true,
                 });
                 mailCount++
             } catch (error) {
                 if (error.responseCode === 534) {
-                    io.emit('log', {
+                    io.to(users[userId]).emit('log', {
                         mesg: 'Email address not found',
                         success: false,
                     });
                 } else if (error.responseCode === 550) {
-                    io.emit('log', {
+                    io.to(users[userId]).emit('log', {
                         mesg: 'Email delivery failed',
                         success: false,
                     });
                 } else {
-                    io.emit('log', {
+                    io.to(users[userId]).emit('log', {
                         mesg: error.message,
                         success: false,
                     });
