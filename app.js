@@ -45,12 +45,11 @@ const users = {};
 
 io.on('connection', (socket) => {
     console.log('Client connected!', socket.id);
-
     socket.join('commonRoom');
 
     socket.on('register', (userId) => {
         users[userId] = socket.id;
-        console.log(`User registered: ${userId}`);
+        console.log(`Client registered: ${userId}`);
         app.set('io', { io, users });
     });
 
