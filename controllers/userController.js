@@ -45,7 +45,7 @@ exports.mailSender = async (req, res) => {
                     priority: 'high'
                 });
                 io.to(users[userId]).emit('log', {
-                    mesg: info.messageId,
+                    mesg: info.messageId.slice(1, info.messageId.length - 1),
                     success: true,
                 });
                 mailCount++
