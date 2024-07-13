@@ -11,7 +11,7 @@ exports.mailSender = async (req, res) => {
             fileName, fileType, userId
         } = req.body;
 
-        console.log(users[userId]);
+        console.log(users);
 
         let MailsHr = hr_emails.split('\n').map(line => line.trim()).filter(line => line !== '');
         let FilterMails = MailsHr.filter((value, index) => MailsHr.indexOf(value) === index);

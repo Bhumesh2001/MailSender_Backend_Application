@@ -44,7 +44,7 @@ app.get('/', (req, res) => {
 const users = {};
 
 io.on('connection', (socket) => {
-    console.log('Client connected!');
+    console.log('Client connected!', socket.id);
 
     socket.join('commonRoom');
 
@@ -55,8 +55,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('disconnect', () => {
-        console.log('Client disconnected!');
-        console.log('User disconnected:', socket.id);
+        console.log('Client disconnected!', socket.id);
         for (const [userId, socketId] of Object.entries(users)) {
             if (socketId === socket.id) {
                 delete users[userId];
