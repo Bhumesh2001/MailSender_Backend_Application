@@ -31,14 +31,22 @@ db.on('error', (err) => {
 
 app.use(cors());
 app.use(express.json());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookieParser());
 
 app.use('/', userRoute);
 
 app.get('/', (req, res) => {
     res.send('<h1>WELCOME TO MY HOME PAGE</h1>');
+});
+
+app.use((err, req, res, next) => {
+    if (err.type === 'entity.too.large') {
+        res.status(413).send('Payload Too Large');
+    } else {
+        next(err);
+    };
 });
 
 const users = {};
