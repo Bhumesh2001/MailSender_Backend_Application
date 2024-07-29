@@ -43,7 +43,10 @@ app.get('/', (req, res) => {
 
 app.use((err, req, res, next) => {
     if (err.type === 'entity.too.large') {
-        res.status(413).send('Payload Too Large');
+        res.status(413).send(JSON.stringify({
+            success: false,
+            message: 'Payload Too Large',
+        }));
     } else {
         next(err);
     };
