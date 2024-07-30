@@ -77,7 +77,7 @@ exports.mailSender = async (req, res) => {
         console.log(error);
         res.status(500).send(JSON.stringify({
             error,
-            success: false
+            success: false,
         }));
     };
 };
